@@ -1,5 +1,7 @@
 package com.victorbarreto.gerenciador_tarefas.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.victorbarreto.gerenciador_tarefas.config.SecurityConfig;
@@ -32,4 +34,7 @@ public class UserService {
         return userRepository.save(userModel);
     }
 
+    public List<UserModel> displayUsers() {
+        return userRepository.findAll();
+    }
 }
