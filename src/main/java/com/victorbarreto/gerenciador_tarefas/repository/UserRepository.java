@@ -5,4 +5,6 @@ import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
 
 public interface UserRepository extends JpaRepository<UserModel, Long> {
     UserModel findByUsername(String username);
+
+    boolean existsByUsername(String username);
 }
