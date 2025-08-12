@@ -37,4 +37,13 @@ public class UserService {
     public List<UserModel> displayUsers() {
         return userRepository.findAll();
     }
+
+    public UserModel searchById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Id not found!"));
+    }
+
+    public UserModel searchByUsername(String username) {
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found!"));
+    }
 }

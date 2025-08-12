@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.victorbarreto.gerenciador_tarefas.dto.UserCreateDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
@@ -33,5 +34,17 @@ public class UserController {
     public ResponseEntity<List<UserModel>> displayUsers() {
         List<UserModel> userModel = userService.displayUsers();
         return ResponseEntity.ok().body(userModel);
+    }
+
+    @GetMapping("/users/buscar")
+    public ResponseEntity<?> searchByParameters(@RequestParam(required = false) Long id,
+                                                @RequestParam(required = false) String username) {
+        if (id != null) {
+            return ResponseEntity.ok(userService.searchById(id));
+        } else if (username != null) {
+            return ResponseEntity.ok(userService.searchByUsername(username));
+        } else {
+            return ResponseEntity.badRequest().body("Enter an ID or Username to search.");
+        }
     }
 }
