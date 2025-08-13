@@ -2,7 +2,6 @@ package com.victorbarreto.gerenciador_tarefas.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -11,14 +10,14 @@ import com.victorbarreto.gerenciador_tarefas.dto.UserCreateDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
 import com.victorbarreto.gerenciador_tarefas.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private SecurityConfig securityConfig;
+    private final UserRepository userRepository;
+    private final SecurityConfig securityConfig;
 
     public UserModel createUser(UserCreateDTO userCreateDTO) {
         UserModel userModel = new UserModel();

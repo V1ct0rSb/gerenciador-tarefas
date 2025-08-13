@@ -2,7 +2,6 @@ package com.victorbarreto.gerenciador_tarefas.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -19,13 +18,14 @@ import com.victorbarreto.gerenciador_tarefas.entity.TaskModel;
 import com.victorbarreto.gerenciador_tarefas.service.TaskService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping(value = "/api")
+@RequiredArgsConstructor
 public class TaskController {
 
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/tasks")

@@ -3,7 +3,6 @@ package com.victorbarreto.gerenciador_tarefas.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,13 +19,14 @@ import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
 import com.victorbarreto.gerenciador_tarefas.service.UserService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping(value = "/api")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping("/users")
     public ResponseEntity<UserModel> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
@@ -56,7 +56,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/users/{username}")
     public ResponseEntity<UserModel> modifyUser(@PathVariable String username,
-                                                      @RequestBody UserCreateDTO userCreateDTO) {
+                                                @RequestBody UserCreateDTO userCreateDTO) {
         UserModel userModel = userService.modifyUser(username, userCreateDTO);
         return ResponseEntity.ok().body(userModel);
     }
