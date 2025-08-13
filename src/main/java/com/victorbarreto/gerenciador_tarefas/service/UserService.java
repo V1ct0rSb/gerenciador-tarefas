@@ -63,4 +63,16 @@ public class UserService {
 
         return userRepository.findAll(userModelExample);
     }
+
+    public UserModel modifyUser(String username, UserCreateDTO userCreateDTO) {
+        UserModel userModel = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found!"));
+
+        userModel.setUsername(userCreateDTO.username());
+        String senha = securityConfig.passwordEncoder().encode(userCreateDTO.password());
+        userModel.setPassword(senha);
+        userModel.setRole(userCreateDTO.role());
+
+        return userRepository.save(userModel);
+    }
 }
