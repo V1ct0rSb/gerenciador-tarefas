@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,13 +30,14 @@ public class UserController {
         return ResponseEntity.status(201).body(userModel);
     }
 
-    //Somente ADM
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<List<UserModel>> displayUsers() {
         List<UserModel> userModel = userService.displayUsers();
         return ResponseEntity.ok().body(userModel);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/buscar")
     public ResponseEntity<?> searchByParameters(@RequestParam(required = false) Long id,
                                                 @RequestParam(required = false) String username) {
