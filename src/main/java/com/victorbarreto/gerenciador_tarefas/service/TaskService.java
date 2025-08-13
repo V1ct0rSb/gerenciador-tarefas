@@ -1,6 +1,7 @@
 package com.victorbarreto.gerenciador_tarefas.service;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import com.victorbarreto.gerenciador_tarefas.dto.TaskCreateDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.TaskModel;
@@ -8,7 +9,6 @@ import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
 import com.victorbarreto.gerenciador_tarefas.repository.TaskRepository;
 import com.victorbarreto.gerenciador_tarefas.repository.UserRepository;
 
-import jakarta.persistence.EntityListeners;
 import lombok.RequiredArgsConstructor;
 
 import static com.victorbarreto.gerenciador_tarefas.entity.TaskStatus.PENDING;
@@ -35,5 +35,17 @@ public class TaskService {
         return taskRepository.save(taskModel);
     }
 
+    public List<TaskModel> seeTaskUsuario(String username) {
+        UserModel userModel = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
+        return taskRepository.findByUser(userModel);
+    }
+
+    public List<TaskModel> seeTaskAdm(String username) {
+        UserModel userModel = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return taskRepository.findAll();
+    }
 }
