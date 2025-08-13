@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import com.victorbarreto.gerenciador_tarefas.dto.TaskCreateDTO;
+import com.victorbarreto.gerenciador_tarefas.dto.TaskStatusDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.TaskModel;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
 import com.victorbarreto.gerenciador_tarefas.repository.TaskRepository;
@@ -47,5 +48,14 @@ public class TaskService {
             .orElseThrow(() -> new RuntimeException("User not found"));
 
         return taskRepository.findAll();
+    }
+
+    public TaskModel statusUpdate(Long id, String username, TaskStatusDTO taskStatusDTO) {
+        TaskModel taskModel = taskRepository.findByIdAndUser_Username(id, username)
+            .orElseThrow(() -> new RuntimeException("Task not found or does not belong to the user!"));
+
+        taskModel.setStatus(taskStatusDTO.status());
+
+        return taskRepository.save(taskModel);
     }
 }
