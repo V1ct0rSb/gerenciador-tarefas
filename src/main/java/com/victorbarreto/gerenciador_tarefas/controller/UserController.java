@@ -53,6 +53,7 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/users/{username}")
     public ResponseEntity<UserModel> modifyUser(@PathVariable String username,
                                                       @RequestBody UserCreateDTO userCreateDTO) {
