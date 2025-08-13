@@ -3,6 +3,8 @@ package com.victorbarreto.gerenciador_tarefas.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import com.victorbarreto.gerenciador_tarefas.config.SecurityConfig;
 import com.victorbarreto.gerenciador_tarefas.dto.UserCreateDTO;
@@ -45,5 +47,20 @@ public class UserService {
     public UserModel searchByUsername(String username) {
         return userRepository.findByUsername(username)
             .orElseThrow(() -> new RuntimeException("User not found!"));
+    }
+
+    public List<UserModel> searchByExample(String username, Long id) {
+        UserModel userModel = new UserModel();
+
+        userModel.setUsername(username);
+        userModel.setId(id);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+            .withIgnoreNullValues()
+            .withIgnoreCase()
+            .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Example<UserModel> userModelExample = Example.of(userModel, matcher);
+
+        return userRepository.findAll(userModelExample);
     }
 }

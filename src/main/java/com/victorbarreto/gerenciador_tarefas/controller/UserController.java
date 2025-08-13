@@ -1,6 +1,7 @@
 package com.victorbarreto.gerenciador_tarefas.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.victorbarreto.gerenciador_tarefas.dto.UserCreateDTO;
+import com.victorbarreto.gerenciador_tarefas.dto.UserResponseDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
 import com.victorbarreto.gerenciador_tarefas.service.UserService;
 
@@ -39,14 +41,12 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/buscar")
-    public ResponseEntity<?> searchByParameters(@RequestParam(required = false) Long id,
-                                                @RequestParam(required = false) String username) {
-        if (id != null) {
-            return ResponseEntity.ok(userService.searchById(id));
-        } else if (username != null) {
-            return ResponseEntity.ok(userService.searchByUsername(username));
-        } else {
-            return ResponseEntity.badRequest().body("Enter an ID or Username to search.");
-        }
+    public ResponseEntity<List<UserResponseDTO>> searchByParameters(@RequestParam(required = false) Long id,
+                                                                    @RequestParam(required = false) String username) {
+        List<UserModel> resultado = userService.searchByExample(username, id);
+        List<UserResponseDTO> list = resultado.stream().map(user -> new UserResponseDTO(user.getId(), user.getUsername(), user.getRole())).collect(Collectors.toList());
+
+        return ResponseEntity.ok(list);
     }
+
 }
