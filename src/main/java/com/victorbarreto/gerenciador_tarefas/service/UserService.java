@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
+import com.victorbarreto.gerenciador_tarefas.config.AuthorizationServerConfiguration;
 import com.victorbarreto.gerenciador_tarefas.config.SecurityConfig;
 import com.victorbarreto.gerenciador_tarefas.dto.UserCreateDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
@@ -17,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final SecurityConfig securityConfig;
+    private final AuthorizationServerConfiguration authorizationServerConfiguration;
 
     public UserModel createUser(UserCreateDTO userCreateDTO) {
         UserModel userModel = new UserModel();
@@ -27,7 +28,7 @@ public class UserService {
         }
 
         userModel.setUsername(userCreateDTO.username());
-        String senha = securityConfig.passwordEncoder().encode(userCreateDTO.password());
+        String senha = authorizationServerConfiguration.passwordEncoder().encode(userCreateDTO.password());
         userModel.setPassword(senha);
         userModel.setRole(userCreateDTO.role());
         userModel.setEnable(true);
@@ -68,7 +69,7 @@ public class UserService {
             .orElseThrow(() -> new RuntimeException("User not found!"));
 
         userModel.setUsername(userCreateDTO.username());
-        String senha = securityConfig.passwordEncoder().encode(userCreateDTO.password());
+        String senha = authorizationServerConfiguration.passwordEncoder().encode(userCreateDTO.password());
         userModel.setPassword(senha);
         userModel.setRole(userCreateDTO.role());
 
