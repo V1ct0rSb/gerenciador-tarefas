@@ -1,5 +1,7 @@
 package com.victorbarreto.gerenciador_tarefas.config;
 
+import java.util.Arrays;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -32,21 +34,22 @@ public class CustomRegisterClientRepository implements RegisteredClientRepositor
     @Override
     public RegisteredClient findByClientId(String clientId) {
         var client = clientService.obterPorClientID(clientId);
+        if (client == null) return null;
 
-        if (client == null) {
-            return null;
-        }
-
-        return RegisteredClient.withId(client.getId().toString())
+        RegisteredClient.Builder builder = RegisteredClient.withId(client.getId().toString())
             .clientId(client.getClientId())
             .clientSecret(passwordEncoder.encode(client.getClientSecret()))
             .redirectUri(client.getRedirectURI())
-            .scope(client.getScope())
             .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
             .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
             .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
             .tokenSettings(tokenSettings)
-            .clientSettings(clientSettings)
-            .build();
+            .clientSettings(clientSettings);
+
+        Arrays.stream(client.getScope().split(" "))
+            .forEach(builder::scope);
+
+        return builder.build();
     }
+
 }
