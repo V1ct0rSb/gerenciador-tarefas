@@ -1,6 +1,7 @@
 package com.victorbarreto.gerenciador_tarefas.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -57,7 +58,7 @@ public class TaskController {
 
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/tasks/{id}")
-    public ResponseEntity<TaskModel> statusUpdate(@PathVariable Long id,
+    public ResponseEntity<TaskModel> statusUpdate(@PathVariable UUID id,
                                                   @RequestBody TaskStatusDTO taskStatusDTO,
                                                   Authentication authentication) {
         String username = authentication.getName();

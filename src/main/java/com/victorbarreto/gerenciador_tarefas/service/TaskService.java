@@ -1,6 +1,7 @@
 package com.victorbarreto.gerenciador_tarefas.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import com.victorbarreto.gerenciador_tarefas.dto.TaskCreateDTO;
@@ -50,7 +51,7 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public TaskModel statusUpdate(Long id, String username, TaskStatusDTO taskStatusDTO) {
+    public TaskModel statusUpdate(UUID id, String username, TaskStatusDTO taskStatusDTO) {
         TaskModel taskModel = taskRepository.findByIdAndUser_Username(id, username)
             .orElseThrow(() -> new RuntimeException("Task not found or does not belong to the user!"));
 

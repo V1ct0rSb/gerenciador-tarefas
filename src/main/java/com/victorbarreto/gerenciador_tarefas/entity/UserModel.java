@@ -2,6 +2,7 @@ package com.victorbarreto.gerenciador_tarefas.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,14 +27,13 @@ import lombok.Setter;
 public class UserModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     @Column(unique = true)
     private String username;
     private String password;
     @Enumerated(EnumType.STRING)
     private Roles role;
-    private Boolean enable;
 
     @OneToMany(mappedBy = "user")
     private List<TaskModel> tasks = new ArrayList<>();

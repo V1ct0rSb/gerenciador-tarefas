@@ -1,6 +1,7 @@
 package com.victorbarreto.gerenciador_tarefas.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -31,7 +32,6 @@ public class UserService {
         String senha = authorizationServerConfiguration.passwordEncoder().encode(userCreateDTO.password());
         userModel.setPassword(senha);
         userModel.setRole(userCreateDTO.role());
-        userModel.setEnable(true);
 
         return userRepository.save(userModel);
     }
@@ -45,7 +45,7 @@ public class UserService {
             .toList();
     }
 
-    public UserModel searchById(Long id) {
+    public UserModel searchById(UUID id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Id not found!"));
     }
 
@@ -53,7 +53,7 @@ public class UserService {
         return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found!"));
     }
 
-    public List<UserModel> searchByExample(String username, Long id) {
+    public List<UserModel> searchByExample(String username, UUID id) {
         UserModel userModel = new UserModel();
 
         userModel.setUsername(username);

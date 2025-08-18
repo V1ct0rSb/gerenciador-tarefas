@@ -1,6 +1,7 @@
 package com.victorbarreto.gerenciador_tarefas.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,16 +24,16 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "tb_tasks")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 public class TaskModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private String title;
     private String description;
     @Enumerated(EnumType.STRING)

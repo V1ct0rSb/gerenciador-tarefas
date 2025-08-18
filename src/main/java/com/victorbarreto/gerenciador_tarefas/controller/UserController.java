@@ -1,6 +1,7 @@
 package com.victorbarreto.gerenciador_tarefas.controller;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/buscar")
-    public ResponseEntity<List<UserResponseDTO>> searchByParameters(@RequestParam(required = false) Long id,
+    public ResponseEntity<List<UserResponseDTO>> searchByParameters(@RequestParam(required = false) UUID id,
                                                                     @RequestParam(required = false) String username) {
         List<UserModel> resultado = userService.searchByExample(username, id);
         List<UserResponseDTO> list = resultado.stream()
