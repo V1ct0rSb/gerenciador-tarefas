@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import com.victorbarreto.gerenciador_tarefas.dto.TaskCreateDTO;
+import com.victorbarreto.gerenciador_tarefas.dto.TaskResponseDTO;
 import com.victorbarreto.gerenciador_tarefas.dto.TaskStatusDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.TaskModel;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
@@ -44,11 +45,23 @@ public class TaskService {
         return taskRepository.findByUser(userModel);
     }
 
-    public List<TaskModel> seeTaskAdm(String username) {
+    // Listar todas tasks
+    public List<TaskResponseDTO> seeTaskAdm(String username) {
         UserModel userModel = userRepository.findByUsername(username)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return taskRepository.findAll();
+        List<TaskModel> taskModelList = taskRepository.findAll();
+
+        return taskModelList.stream()
+            .map(task -> new TaskResponseDTO(
+                task.getId(),
+                task.getUser().getUsername(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus(),
+                task.getCreatedAt()))
+            .toList();
+
     }
 
     public TaskModel statusUpdate(UUID id, String username, TaskStatusDTO taskStatusDTO) {
