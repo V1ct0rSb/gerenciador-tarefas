@@ -6,8 +6,8 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import com.victorbarreto.gerenciador_tarefas.config.AuthorizationServerConfiguration;
-import com.victorbarreto.gerenciador_tarefas.config.SecurityConfig;
 import com.victorbarreto.gerenciador_tarefas.dto.UserCreateDTO;
+import com.victorbarreto.gerenciador_tarefas.dto.UserResponseDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
 import com.victorbarreto.gerenciador_tarefas.repository.UserRepository;
 
@@ -36,8 +36,13 @@ public class UserService {
         return userRepository.save(userModel);
     }
 
-    public List<UserModel> displayUsers() {
-        return userRepository.findAll();
+
+    public List<UserResponseDTO> displayUsers() {
+        List<UserModel> userModelList = userRepository.findAll();
+
+        return userModelList.stream()
+            .map(user -> new UserResponseDTO(user.getId(), user.getUsername(), user.getRole()))
+            .toList();
     }
 
     public UserModel searchById(Long id) {
@@ -45,8 +50,7 @@ public class UserService {
     }
 
     public UserModel searchByUsername(String username) {
-        return userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found!"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found!"));
     }
 
     public List<UserModel> searchByExample(String username, Long id) {
@@ -65,8 +69,8 @@ public class UserService {
     }
 
     public UserModel modifyUser(String username, UserCreateDTO userCreateDTO) {
-        UserModel userModel = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found!"));
+        UserModel userModel =
+            userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found!"));
 
         userModel.setUsername(userCreateDTO.username());
         String senha = authorizationServerConfiguration.passwordEncoder().encode(userCreateDTO.password());

@@ -36,8 +36,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
-    public ResponseEntity<List<UserModel>> displayUsers() {
-        List<UserModel> userModel = userService.displayUsers();
+    public ResponseEntity<List<UserResponseDTO>> displayUsers() {
+        List<UserResponseDTO> userModel = userService.displayUsers();
         return ResponseEntity.ok().body(userModel);
     }
 
