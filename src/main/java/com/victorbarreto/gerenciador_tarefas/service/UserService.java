@@ -10,6 +10,8 @@ import com.victorbarreto.gerenciador_tarefas.config.AuthorizationServerConfigura
 import com.victorbarreto.gerenciador_tarefas.dto.UserCreateDTO;
 import com.victorbarreto.gerenciador_tarefas.dto.UserResponseDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
+import com.victorbarreto.gerenciador_tarefas.execption.UserAlreadyExistsException;
+import com.victorbarreto.gerenciador_tarefas.execption.UserNotFoundException;
 import com.victorbarreto.gerenciador_tarefas.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +27,7 @@ public class UserService {
         UserModel userModel = new UserModel();
 
         if (userRepository.existsByUsername(userCreateDTO.username())) {
-            throw new RuntimeException("User already exists!!");
+            throw new UserAlreadyExistsException("User already exists!!");
         }
 
         userModel.setUsername(userCreateDTO.username());
@@ -50,7 +52,7 @@ public class UserService {
     }
 
     public UserModel searchByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found!"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found!"));
     }
 
     public List<UserModel> searchByExample(String username, UUID id) {
@@ -70,7 +72,7 @@ public class UserService {
 
     public UserModel modifyUser(String username, UserCreateDTO userCreateDTO) {
         UserModel userModel =
-            userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found!"));
+            userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         userModel.setUsername(userCreateDTO.username());
         String senha = authorizationServerConfiguration.passwordEncoder().encode(userCreateDTO.password());

@@ -9,6 +9,8 @@ import com.victorbarreto.gerenciador_tarefas.dto.TaskResponseDTO;
 import com.victorbarreto.gerenciador_tarefas.dto.TaskStatusDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.TaskModel;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
+import com.victorbarreto.gerenciador_tarefas.execption.TaskNotFoundException;
+import com.victorbarreto.gerenciador_tarefas.execption.UserNotFoundException;
 import com.victorbarreto.gerenciador_tarefas.repository.TaskRepository;
 import com.victorbarreto.gerenciador_tarefas.repository.UserRepository;
 
@@ -25,7 +27,7 @@ public class TaskService {
 
     public TaskModel createTask(TaskCreateDTO taskCreateDTO, String username) {
         UserModel userModel = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
         TaskModel taskModel = new TaskModel();
 
         taskModel.setTitle(taskCreateDTO.title());
@@ -40,7 +42,7 @@ public class TaskService {
 
     public List<TaskModel> seeTaskUsuario(String username) {
         UserModel userModel = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return taskRepository.findByUser(userModel);
     }
@@ -48,7 +50,7 @@ public class TaskService {
     // Listar todas tasks
     public List<TaskResponseDTO> seeTaskAdm(String username) {
         UserModel userModel = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         List<TaskModel> taskModelList = taskRepository.findAll();
 
@@ -61,15 +63,23 @@ public class TaskService {
                 task.getStatus(),
                 task.getCreatedAt()))
             .toList();
-
     }
 
     public TaskModel statusUpdate(UUID id, String username, TaskStatusDTO taskStatusDTO) {
         TaskModel taskModel = taskRepository.findByIdAndUser_Username(id, username)
-            .orElseThrow(() -> new RuntimeException("Task not found or does not belong to the user!"));
+            .orElseThrow(() -> new TaskNotFoundException("Task not found or does not belong to the user!"));
 
         taskModel.setStatus(taskStatusDTO.status());
 
         return taskRepository.save(taskModel);
     }
+
+    public void deletarTask(UUID id, String username) {
+        UserModel userModel = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        taskRepository.deleteById(id);
+    }
+
+
 }

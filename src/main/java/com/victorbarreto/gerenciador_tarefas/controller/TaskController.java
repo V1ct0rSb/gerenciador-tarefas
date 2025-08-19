@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import com.victorbarreto.gerenciador_tarefas.dto.TaskCreateDTO;
 import com.victorbarreto.gerenciador_tarefas.dto.TaskResponseDTO;
 import com.victorbarreto.gerenciador_tarefas.dto.TaskStatusDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.TaskModel;
+import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
 import com.victorbarreto.gerenciador_tarefas.service.TaskService;
 
 import jakarta.validation.Valid;
@@ -58,6 +60,7 @@ public class TaskController {
         return ResponseEntity.ok().body(taskModelList);
     }
 
+
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/tasks/{id}")
     public ResponseEntity<TaskModel> statusUpdate(@PathVariable UUID id,
@@ -66,6 +69,15 @@ public class TaskController {
         String username = authentication.getName();
         TaskModel taskModel = taskService.statusUpdate(id, username, taskStatusDTO);
         return ResponseEntity.ok().body(taskModel);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping("/tasks/{id}")
+    public ResponseEntity<Void> deletarTask(@PathVariable UUID id, Authentication authentication) {
+        String username = authentication.getName();
+        taskService.deletarTask(id, username);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
