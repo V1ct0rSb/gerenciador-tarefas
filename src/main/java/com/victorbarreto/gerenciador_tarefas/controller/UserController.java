@@ -19,17 +19,29 @@ import com.victorbarreto.gerenciador_tarefas.dto.UserResponseDTO;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
 import com.victorbarreto.gerenciador_tarefas.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping(value = "/api")
 @RequiredArgsConstructor
+@Tag(name = "Users")
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/users")
+    @Operation(summary = "createUser", description = "create user")
+    @ApiResponses(
+        {
+            @ApiResponse(responseCode = "201", description = "Successfully created"),
+            @ApiResponse(responseCode = "409", description = "User already registered")
+        }
+    )
     public ResponseEntity<UserModel> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         UserModel userModel = userService.createUser(userCreateDTO);
         return ResponseEntity.status(201).body(userModel);
@@ -37,6 +49,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
+    @Operation(summary = "displayUsers", description = "List registered users")
+    @ApiResponse(responseCode = "200", description = "User list displayed successfully")
     public ResponseEntity<List<UserResponseDTO>> displayUsers() {
         List<UserResponseDTO> userModel = userService.displayUsers();
         return ResponseEntity.ok().body(userModel);
@@ -44,6 +58,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/buscar")
+    @Operation(summary = "searchByParameters", description = "Search User by ID or Name")
+    @ApiResponse(responseCode = "200", description = "User list displayed successfully")
     public ResponseEntity<List<UserResponseDTO>> searchByParameters(@RequestParam(required = false) UUID id,
                                                                     @RequestParam(required = false) String username) {
         List<UserModel> resultado = userService.searchByExample(username, id);
@@ -56,6 +72,11 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/users/{username}")
+    @Operation(summary = "modifyUser", description = "Change user information")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "User modified successfully"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public ResponseEntity<UserModel> modifyUser(@PathVariable String username,
                                                 @RequestBody UserCreateDTO userCreateDTO) {
         UserModel userModel = userService.modifyUser(username, userCreateDTO);
