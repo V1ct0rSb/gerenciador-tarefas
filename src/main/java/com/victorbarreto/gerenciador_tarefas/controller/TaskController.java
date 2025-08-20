@@ -21,19 +21,31 @@ import com.victorbarreto.gerenciador_tarefas.entity.TaskModel;
 import com.victorbarreto.gerenciador_tarefas.entity.UserModel;
 import com.victorbarreto.gerenciador_tarefas.service.TaskService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping(value = "/api")
 @RequiredArgsConstructor
+@Tag(name = "Tasks")
 public class TaskController {
 
     private final TaskService taskService;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "createTask", description = "create Task")
+    @ApiResponses(
+        {
+            @ApiResponse(responseCode = "201", description = "Successfully created"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+        }
+    )
     @PostMapping("/tasks")
-    public ResponseEntity<TaskModel> criarTask(
+    public ResponseEntity<TaskModel> createTask(
         @Valid @RequestBody TaskCreateDTO taskCreateDTO,
         Authentication authentication) {
 
@@ -44,6 +56,13 @@ public class TaskController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "seeTaskUsuario", description = "View tasks by logged in user")
+    @ApiResponses(
+        {
+            @ApiResponse(responseCode = "200", description = "User task list"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+        }
+    )
     @GetMapping("/tasks")
     public ResponseEntity<List<TaskModel>> seeTaskUsuario(Authentication authentication) {
         String username = authentication.getName();
@@ -53,6 +72,13 @@ public class TaskController {
 
     // Listar todas tasks
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "seeTaskAdm", description = "List of all tasks of registered users")
+    @ApiResponses(
+        {
+            @ApiResponse(responseCode = "200", description = "User task list"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+        }
+    )
     @GetMapping("/tasks/admin")
     public ResponseEntity<List<TaskResponseDTO>> seeTaskAdm(Authentication authentication) {
         String username = authentication.getName();
@@ -62,6 +88,13 @@ public class TaskController {
 
 
     @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "statusUpdate", description = "Update the task informed by the logged in user")
+    @ApiResponses(
+        {
+            @ApiResponse(responseCode = "200", description = "Task updated successfully"),
+            @ApiResponse(responseCode = "404", description = "User task not found")
+        }
+    )
     @PutMapping("/tasks/{id}")
     public ResponseEntity<TaskModel> statusUpdate(@PathVariable UUID id,
                                                   @RequestBody TaskStatusDTO taskStatusDTO,
@@ -72,6 +105,13 @@ public class TaskController {
     }
 
     @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "deletarTask", description = "Delete the task informed by the user")
+    @ApiResponses(
+        {
+            @ApiResponse(responseCode = "204", description = "Task deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+        }
+    )
     @DeleteMapping("/tasks/{id}")
     public ResponseEntity<Void> deletarTask(@PathVariable UUID id, Authentication authentication) {
         String username = authentication.getName();
